@@ -1,28 +1,75 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
-  return (
-    <nav className="bg-black text-white px-6 py-4 fixed w-full top-0 z-50">
-      <div className="container mx-auto flex justify-between items-center">
-        <a href="#" className="text-2xl font-bold">Street Artiste</a>
+  // Désactiver le scroll du body quand le menu est ouvert
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
 
-        {/* Bouton Menu Hamburger */}
+    return () => document.body.classList.remove("overflow-hidden");
+  }, [isOpen]);
+
+  // Fermer le menu si on clique en dehors
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isOpen && !event.target.closest(".mobile-menu") && !event.target.closest(".menu-btn")) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  return (
+    <nav className="bg-black text-white px-6 h-20 fixed w-full top-0 z-50">
+      <div className="container mx-auto flex justify-between items-center h-full">
+        {/* Logo cliquable */}
+        <a href="/" className="flex items-center">
+          <img 
+            src="/phil-logo-white.png"  
+            alt="Logo de l'artiste"
+            className="h-12 w-auto"
+          />
+        </a>
+
+        {/* MENU EN VERSION GRAND ÉCRAN */}
+        <ul className="hidden md:flex space-x-8">
+          <li><a href="#about" className="hover:text-gray-400">Présentation</a></li>
+          <li><a href="#gallery" className="hover:text-gray-400">Galerie</a></li>
+          <li><a href="#agenda" className="hover:text-gray-400">Agenda</a></li>
+          <li><a href="#contact" className="hover:text-gray-400">Contact</a></li>
+        </ul>
+
+        {/* Bouton Menu Hamburger animé pour MOBILE */}
         <button 
-          className="md:hidden text-white text-3xl" 
+          className="menu-btn md:hidden flex flex-col gap-2 w-10 h-10 relative z-50"
           onClick={() => setIsOpen(!isOpen)}
         >
-          ☰
+          <span className={`block bg-white h-1 w-full rounded transition-all duration-300 ${isOpen ? "rotate-45 translate-y-3" : ""}`}></span>
+          <span className={`block bg-white h-1 w-full rounded transition-all duration-300 ${isOpen ? "opacity-0" : ""}`}></span>
+          <span className={`block bg-white h-1 w-full rounded transition-all duration-300 ${isOpen ? "-rotate-45 -translate-y-3" : ""}`}></span>
         </button>
 
-        {/* Liens du menu */}
-        <ul className={`md:flex gap-6 absolute md:static left-0 top-full w-full md:w-auto bg-black md:bg-transparent transition-all duration-300 ${isOpen ? "block" : "hidden"}`}>
-          <li><a href="#about" className="block py-2 px-4 hover:text-gray-400">Présentation</a></li>
-          <li><a href="#gallery" className="block py-2 px-4 hover:text-gray-400">Galerie</a></li>
-          <li><a href="#agenda" className="block py-2 px-4 hover:text-gray-400">Agenda</a></li>
-          <li><a href="#contact" className="block py-2 px-4 hover:text-gray-400">Contact</a></li>
-        </ul>
+        {/* Overlay semi-transparent */}
+        <div className={`fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setIsOpen(false)}></div>
+
+        {/* MENU MOBILE */}
+        <div className={`mobile-menu fixed top-0 right-0 h-full w-64 bg-black shadow-lg transform transition-transform duration-300 md:hidden ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
+          <ul className="flex flex-col mt-20 space-y-6 px-6">
+            <li><a href="#about" className="block py-2 text-lg hover:text-gray-400" onClick={() => setIsOpen(false)}>Présentation</a></li>
+            <li><a href="#gallery" className="block py-2 text-lg hover:text-gray-400" onClick={() => setIsOpen(false)}>Galerie</a></li>
+            <li><a href="#agenda" className="block py-2 text-lg hover:text-gray-400" onClick={() => setIsOpen(false)}>Agenda</a></li>
+            <li><a href="#contact" className="block py-2 text-lg hover:text-gray-400" onClick={() => setIsOpen(false)}>Contact</a></li>
+          </ul>
+        </div>
       </div>
     </nav>
   );
