@@ -1,17 +1,9 @@
-
 @import "tailwindcss";
 
-/* Désactiver le défilement horizontal */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   overflow-x: hidden;
-}
-
-/* Optionnel : S'assurer que les éléments ne dépassent pas de la largeur de l'écran */
-.container {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-.mobile-menu {
-  max-width: 100%; /* S'assurer que le menu ne dépasse pas de l'écran */
 }
